@@ -12,15 +12,15 @@ def quizes():
 
 @app.route('/flashcards')
 def flashcards():
-    return render_template('flashcards.html', active_page='flashcards')
+    return render_template('flash_cards.html', active_page='flashcards')
 
 @app.route('/slidedecks')
 def slidedecks():
-    return render_template('slidedecks.html', active_page='slidedecks')
+    return render_template('slide_decks.html', active_page='slidedecks')
 
 @app.route('/books')
 def books():
-    return render_template('books.html', active_page='books')
+    return render_template('manage_books.html', active_page='books')
 
 @app.route('/submit_user_info', methods=['POST'])
 def submit_user_info():
