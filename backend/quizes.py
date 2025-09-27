@@ -201,25 +201,31 @@ def grade_quiz(quiz_data: Dict[str, Any], user_answers: Dict[str, str]) -> Dict[
         is_correct = False
         final_explanation = explanation
         
-        user_answer = user_answer.strip() # Already done in the loop, but safe to repeat
+        user_answer_stripped = user_answer.strip() 
 
         if q['type'] == 'mcq':
             # Case-insensitive string comparison for MCQs
-            is_correct = (user_answer.lower() == correct_answer.lower())
+            is_correct = (user_answer_stripped.lower() == correct_answer.lower())
             
         elif q['type'] == 'short_answer':
-            # Call the synchronous LLM grading function for subjective answers
-            llm_result = semantically_grade_short_answer(
-                q['question'], user_answer, correct_answer, explanation
-            )
-            is_correct = llm_result.get('is_correct', False)
-            # Overwrite the simple explanation with the richer LLM feedback
-            final_explanation = llm_result['llm_explanation'] 
+            
+            # === THE CRITICAL FIX IS HERE ===
+            if not user_answer_stripped:
+                is_correct = False # An empty answer is never correct for short answer.
+                final_explanation = f"You did not provide an answer. The correct answer was: {correct_answer}. Please review the explanation."
+            else:
+                # Proceed to LLM grading only if an answer was provided
+                llm_result = semantically_grade_short_answer(
+                    q['question'], user_answer_stripped, correct_answer, explanation
+                )
+                is_correct = llm_result.get('is_correct', False)
+                # Overwrite the simple explanation with the richer LLM feedback
+                final_explanation = llm_result['llm_explanation'] 
 
         return {
             'id': q_id,
             'is_correct': is_correct,
-            'user_answer': user_answer,
+            'user_answer': user_answer_stripped,
             'correct_answer': correct_answer,
             'explanation': final_explanation
         }
@@ -228,14 +234,13 @@ def grade_quiz(quiz_data: Dict[str, Any], user_answers: Dict[str, str]) -> Dict[
     grading_tasks = []
     for q in quiz_data['quiz']['questions']:
         q_id = q['id']
-        user_answer = user_answers.get(f"answer-{q_id}", "")
+        # Pass the raw user answer from the dictionary
+        user_answer = user_answers.get(f"answer-{q_id}", "") 
         # Add the function call arguments to a list for the executor
         grading_tasks.append((q, user_answer))
 
     # 2. Run grading tasks concurrently using a ThreadPoolExecutor
-    # A max_workers of 5-10 is usually a good starting point for API calls
     with ThreadPoolExecutor(max_workers=8) as executor:
-        # `executor.map` applies `grade_single_question_task` to each set of arguments
         graded_results: List[Dict[str, Any]] = list(executor.map(
             lambda args: grade_single_question_task(*args), grading_tasks
         ))
