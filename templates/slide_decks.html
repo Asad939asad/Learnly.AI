@@ -1,0 +1,67 @@
+<!-- templates/slide_decks.html -->
+
+<div class="container mx-auto py-12">
+    <h1 class="text-4xl font-bold text-center mb-8">Generate a Slide Deck</h1>
+
+    <div class="flex flex-col items-center">
+        <button onclick="askForSlideDeck()" class="mb-6 w-full bg-primary text-white py-3 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
+            Generate Slide Deck
+        </button>
+
+        <div id="slide-deck-container" class="space-y-6"></div>
+    </div>
+</div>
+
+<script>
+    async function askForSlideDeck() {
+        const userPrompt = prompt("Enter a topic for the slide deck:", "Introduction to Machine Learning");
+        if (!userPrompt) return;
+
+        const container = document.getElementById("slide-deck-container");
+        container.innerHTML = "<p class='text-gray-600'>Generating slide deck...</p>";
+
+        try {
+            const res = await fetch("/generate_slide_deck", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: userPrompt })
+            });
+            const data = await res.json();
+
+            if (data.error) {
+                container.innerHTML = `<p class='text-red-500'>Error: ${data.error}</p>`;
+                return;
+            }
+
+            renderSlideDeck(data);
+        } catch (err) {
+            container.innerHTML = `<p class='text-red-500'>Error: ${err.message}</p>`;
+        }
+    }
+
+    function renderSlideDeck(slideDeckData) {
+        const slideDeck = slideDeckData.slide_deck;
+        const container = document.getElementById("slide-deck-container");
+
+        container.innerHTML = `
+            <div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">${slideDeck.title}</h3>
+                <p class="text-gray-500 mb-4">
+                    Topic: ${slideDeck.topic || "N/A"} • Created By: ${slideDeck.metadata.created_by} • Total Slides: ${slideDeck.metadata.total_slides}
+                </p>
+            </div>
+            ${slideDeck.slides.map(slide => `
+                <div class="border border-gray-200 rounded-xl p-4 mb-4">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-3">${slide.slide_title}</h4>
+                    ${
+                        slide.slide_type === "unordered_list"
+                        ? slide.slide_content.map(item => `<li>${item}</li>`).join("")
+                        : slide.slide_type === "ordered_list"
+                        ? slide.slide_content.map(item => `<ol><li>${item}</li></ol>`).join("")
+                        : `<p>${slide.slide_content}</p>`
+                    }
+                </div>
+            `).join("")}
+        `;
+    }
+</script>

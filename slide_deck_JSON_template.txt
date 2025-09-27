@@ -1,0 +1,45 @@
+{
+  "slide_deck": {
+    "title": "Presentation Title",
+    "topic": "Topic of the presentation",
+    "metadata": {
+      "created_at": "ISO8601 datetime",
+      "created_by": "Author name",
+      "total_slides": 10
+    },
+    "slides": [
+      {
+        "slide_id": "slide_1",
+        "slide_type": "title_slide",
+        "slide_title": "Title of Slide 1",
+        "slide_content": "Content for this slide"
+      },
+      {
+        "slide_id": "slide_2",
+        "slide_type": "paragraph",
+        "slide_title": "Introduction",
+        "slide_content": "This is an introductory paragraph that provides background information about the topic."
+      },
+      {
+        "slide_id": "slide_3",
+        "slide_type": "unordered_list",
+        "slide_title": "Key Points",
+        "slide_content": [
+          "First key point",
+          "Second key point",
+          "Third key point"
+        ]
+      },
+      {
+        "slide_id": "slide_4",
+        "slide_type": "ordered_list",
+        "slide_title": "Steps to Follow",
+        "slide_content": [
+          "Step 1: Do this",
+          "Step 2: Then do this",
+          "Step 3: Finalize the process"
+        ]
+      }
+    ]
+  }
+}
