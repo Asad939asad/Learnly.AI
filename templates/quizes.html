@@ -1,98 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learnly.ai - Quizes</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#9f3dff',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learnly.ai - Quizzes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#9f3dff',
+            accent: '#8bff3d',
+            secondary: '#ff3d9f',
+            tertiary: '#3d9fff',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
         }
-    </script>
+      }
+    }
+  </script>
 </head>
 <body class="bg-gray-50 font-sans">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="w-64 bg-primary text-white">
-            <div class="p-4">
-                <h1 class="text-2xl font-bold mb-8">E-Learning</h1>
-                <nav class="space-y-2">
-                    <a href="/" class="flex items-center space-x-3 p-3 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                        </svg>
-                        <span class="font-medium">Dashboard</span>
-                    </a>
-                    <a href="/quizes" class="flex items-center space-x-3 p-3 rounded-lg bg-white/10">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                        </svg>
-                        <span class="font-medium">Quizes</span>
-                    </a>
-                    <a href="/flashcards" class="flex items-center space-x-3 p-3 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                        </svg>
-                        <span class="font-medium">Flash Cards</span>
-                    </a>
-                    <a href="/slidedecks" class="flex items-center space-x-3 p-3 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
-                        </svg>
-                        <span class="font-medium">Slide Decks</span>
-                    </a>
-                    <a href="/books" class="flex items-center space-x-3 p-3 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                        <span class="font-medium">Manage Books</span>
-                    </a>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex-1">
-            <!-- Top Bar -->
-            <div class="bg-white border-b p-4 flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-gray-800">Quizes</h2>
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2">
-                        <img src="https://ui-avatars.com/api/?name=John" alt="John" class="w-8 h-8 rounded-full">
-                        <span class="text-sm font-semibold text-gray-800">John</span>
-                    </div>
-                    <a href="/logout" class="text-gray-600 hover:text-gray-800">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Quiz Content -->
-            <div class="p-6">
-                <div class="max-w-4xl mx-auto">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Available Quizes</h3>
-                    <div class="grid gap-6">
-                        <p class="text-gray-600 text-lg">Quiz content will be displayed here.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <div class="w-64 bg-primary text-white">
+    <div class="p-4">
+      <h1 class="text-2xl font-bold mb-8 flex items-center">
+        <svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        Learnly.ai
+      </h1>
+      <nav class="space-y-2">
+        <a href="/" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="font-medium">Dashboard</span>
+        </a>
+        <a href="/quizes" class="flex items-center space-x-3 p-3 rounded-lg bg-white/10">
+          <span class="font-medium">Quizzes</span>
+        </a>
+        <a href="/flashcards" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="font-medium">Flash Cards</span>
+        </a>
+        <a href="/slidedecks" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="font-medium">Slide Decks</span>
+        </a>
+        <a href="/books" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="font-medium">Manage Books</span>
+        </a>
+      </nav>
     </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1">
+    <!-- Top Bar -->
+    <div class="bg-white border-b p-4 flex justify-between items-center">
+      <div class="flex space-x-6">
+        <a href="#" class="text-gray-600 hover:text-primary font-medium">Home</a>
+        <a href="#" class="text-gray-600 hover:text-primary font-medium">Explore</a>
+        <a href="#" class="text-gray-600 hover:text-primary font-medium">Resources</a>
+        <a href="#" class="text-gray-600 hover:text-primary font-medium">Help</a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2">
+          <img src="https://ui-avatars.com/api/?name=John" alt="John"
+               class="w-8 h-8 rounded-full ring-2 ring-primary">
+          <span class="text-sm font-semibold text-gray-800">John</span>
+        </div>
+        <a href="/logout" class="text-gray-600 hover:text-gray-800">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div class="max-w-3xl mx-auto p-6">
+      <div class="mb-8 gradient-bg rounded-2xl p-6 text-white">
+        <h2 class="text-3xl font-bold mb-2">Practice Quizzes</h2>
+        <p class="text-white/90">Test your knowledge and sharpen your skills</p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+        <button onclick="generateQuiz()"
+                class="mb-6 w-full bg-primary text-white py-3 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
+          Generate Quiz
+        </button>
+
+        <div id="quiz-container" class="space-y-6"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Two sample quizzes to simulate generation
+  const sampleQuizzes = [
+    {
+      title: "Basic Math Quiz",
+      questions: [
+        {
+          id: 1,
+          question: "What is 5 + 7?",
+          options: ["10", "11", "12", "13"]
+        },
+        {
+          id: 2,
+          question: "What is the square root of 81?",
+          options: ["7", "8", "9", "10"]
+        }
+      ]
+    },
+    {
+      title: "General Science Quiz",
+      questions: [
+        {
+          id: 1,
+          question: "Which planet is known as the Red Planet?",
+          options: ["Earth", "Mars", "Jupiter", "Venus"]
+        },
+        {
+          id: 2,
+          question: "What is H2O commonly known as?",
+          options: ["Oxygen", "Hydrogen", "Water", "Carbon Dioxide"]
+        }
+      ]
+    }
+  ];
+
+  let currentQuizIndex = 0;
+
+  function renderQuiz(quiz) {
+    const container = document.getElementById("quiz-container");
+    container.innerHTML = `
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">${quiz.title}</h3>
+      ${quiz.questions.map(q => `
+        <div class="border border-gray-200 rounded-xl p-4">
+          <p class="font-semibold text-gray-900 mb-3">${q.id}. ${q.question}</p>
+          <div class="space-y-2">
+            ${q.options.map(opt => `
+              <label class="flex items-center space-x-3">
+                <input type="radio" name="q${q.id}" value="${opt}" class="w-5 h-5 text-primary focus:ring-primary">
+                <span class="text-gray-800">${opt}</span>
+              </label>
+            `).join("")}
+          </div>
+        </div>
+      `).join("")}
+    `;
+  }
+
+  function generateQuiz() {
+    currentQuizIndex = (currentQuizIndex + 1) % sampleQuizzes.length;
+    renderQuiz(sampleQuizzes[currentQuizIndex]);
+  }
+
+  // Load default quiz on page load
+  window.onload = () => {
+    renderQuiz(sampleQuizzes[currentQuizIndex]);
+  };
+</script>
 </body>
 </html>
