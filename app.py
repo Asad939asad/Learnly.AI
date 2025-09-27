@@ -37,10 +37,20 @@ def quizes():
 @app.route("/generate_quiz", methods=["POST"])
 def generate_quiz_route():
     data = request.json
+    # 1. Retrieve the required parameters from the JSON body
     prompt = data.get("prompt", "Generate a general knowledge quiz with 3 questions.")
+    num_questions = data.get("num_questions", 10)  # Default added for safety
+    difficulty = data.get("difficulty", "Medium") # Default added for safety
+    mcq_percent = data.get("mcq_percent", 70)     # Default added for safety
 
     try:
-        quiz_json = generate_quiz(prompt)
+        # 2. Pass all parameters to the updated generate_quiz function
+        quiz_json = generate_quiz(
+            prompt=prompt, 
+            num_questions=num_questions, 
+            difficulty=difficulty, 
+            mcq_percent=mcq_percent
+        )
         return jsonify(quiz_json)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

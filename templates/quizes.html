@@ -1,162 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learnly.ai - Quizzes</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#9f3dff',
-            accent: '#8bff3d',
-            secondary: '#ff3d9f',
-            tertiary: '#3d9fff',
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnly.ai - Quizzes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9f3dff',
+                        accent: '#8bff3d',
+                        secondary: '#ff3d9f',
+                        tertiary: '#3d9fff',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #9f3dff 0%, #ff3d9f 100%);
+        }
+        /* Custom style for radio/checkbox to match primary color */
+        input[type="radio"]:checked, input[type="checkbox"]:checked {
+            border-color: #9f3dff;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans">
 <div class="flex h-screen">
-  <!-- Sidebar -->
-  <div class="w-64 bg-primary text-white">
-    <div class="p-4">
-      <h1 class="text-2xl font-bold mb-8 flex items-center">
-        <svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-        </svg>
-        Learnly.ai
-      </h1>
-      <nav class="space-y-2">
-        <a href="/" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
-          <span class="font-medium">Dashboard</span>
-        </a>
-        <a href="/quizes" class="flex items-center space-x-3 p-3 rounded-lg bg-white/10">
-          <span class="font-medium">Quizzes</span>
-        </a>
-        <a href="/flashcards" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
-          <span class="font-medium">Flash Cards</span>
-        </a>
-        <a href="/slidedecks" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
-          <span class="font-medium">Slide Decks</span>
-        </a>
-        <a href="/manage_books" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
-          <span class="font-medium">Manage Books</span>
-        </a>
-      </nav>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="flex-1">
-    <!-- Top Bar -->
-    <div class="bg-white border-b p-4 flex justify-between items-center">
-      <div class="flex space-x-6">
-        <a href="#" class="text-gray-600 hover:text-primary font-medium">Home</a>
-        <a href="#" class="text-gray-600 hover:text-primary font-medium">Explore</a>
-        <a href="#" class="text-gray-600 hover:text-primary font-medium">Resources</a>
-        <a href="#" class="text-gray-600 hover:text-primary font-medium">Help</a>
-      </div>
-      <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-2">
-          <img src="https://ui-avatars.com/api/?name=John" alt="John"
-               class="w-8 h-8 rounded-full ring-2 ring-primary">
-          <span class="text-sm font-semibold text-gray-800">John</span>
+    <div class="w-64 bg-primary text-white">
+        <div class="p-4">
+            <h1 class="text-2xl font-bold mb-8 flex items-center">
+                <svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                Learnly.ai
+            </h1>
+            <nav class="space-y-2">
+                <a href="/" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                <a href="/quizes" class="flex items-center space-x-3 p-3 rounded-lg bg-white/10">
+                    <span class="font-medium">Quizzes</span>
+                </a>
+                <a href="/flashcards" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                    <span class="font-medium">Flash Cards</span>
+                </a>
+                <a href="/slidedecks" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                    <span class="font-medium">Slide Decks</span>
+                </a>
+                <a href="/manage_books" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                    <span class="font-medium">Manage Books</span>
+                </a>
+            </nav>
         </div>
-        <a href="/logout" class="text-gray-600 hover:text-gray-800">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-          </svg>
-        </a>
-      </div>
     </div>
 
-    <!-- Quiz Section -->
-    <div class="max-w-3xl mx-auto p-6">
-      <div class="mb-8 gradient-bg rounded-2xl p-6 text-white">
-        <h2 class="text-3xl font-bold mb-2">Practice Quizzes</h2>
-        <p class="text-white/90">Test your knowledge and sharpen your skills</p>
-      </div>
+    <div class="flex-1 overflow-auto">
+        <div class="bg-white border-b p-4 flex justify-between items-center sticky top-0 z-10">
+            <div class="flex space-x-6">
+                <a href="#" class="text-gray-600 hover:text-primary font-medium">Home</a>
+                <a href="#" class="text-gray-600 hover:text-primary font-medium">Explore</a>
+                <a href="#" class="text-gray-600 hover:text-primary font-medium">Resources</a>
+                <a href="#" class="text-gray-600 hover:text-primary font-medium">Help</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <img src="https://ui-avatars.com/api/?name=John" alt="John"
+                         class="w-8 h-8 rounded-full ring-2 ring-primary">
+                    <span class="text-sm font-semibold text-gray-800">John</span>
+                </div>
+                <a href="/logout" class="text-gray-600 hover:text-gray-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
 
-      <button onclick="askForQuiz()" 
-        class="mb-6 w-full bg-primary text-white py-3 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
-  Generate Quiz
-</button>
+        <div class="max-w-4xl mx-auto p-6">
+            <div class="mb-6 gradient-bg rounded-xl p-6 text-white">
+                <h2 class="text-3xl font-bold mb-2">Practice Quizzes</h2>
+                <p class="text-white/90">Test your knowledge and sharpen your skills</p>
+            </div>
 
-        <div id="quiz-container" class="space-y-6"></div>
-      </div>
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 mb-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Quiz Generation Settings</h3>
+
+                <div class="mb-4">
+                    <label for="quizTopic" class="block text-sm font-medium text-gray-700 mb-1">Topic/Prompt</label>
+                    <input type="text" id="quizTopic" placeholder="e.g., The basics of quantum mechanics or Chapters 1-3" value="Introduction to Machine Learning"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150">
+                    <p class="text-xs text-gray-400 mt-1">
+                        **Future Feature:** You will be able to select a book/context here for RAG-based quizzes.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="numQuestions" class="block text-sm font-medium text-gray-700 mb-1">Number of Questions</label>
+                        <input type="number" id="numQuestions" value="10" min="1" max="50"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150">
+                    </div>
+
+                    <div>
+                        <label for="difficulty" class="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+                        <select id="difficulty"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary appearance-none bg-white transition duration-150">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Hard">Hard</option>
+                            <option value="Expert">Expert</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="mcqPercent" class="block text-sm font-medium text-gray-700 mb-1">MCQ Percentage</label>
+                        <input type="number" id="mcqPercent" value="70" min="0" max="100"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150">
+                        <p class="text-xs text-gray-500 mt-1">Remaining percentage will be Short Answer.</p>
+                    </div>
+                </div>
+
+                <button onclick="generateAndRenderQuiz()"
+                        id="generateButton"
+                        class="w-full bg-primary text-white py-3 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.01] transition-all duration-200 shadow-lg hover:shadow-xl">
+                    Generate Quiz
+                </button>
+            </div>
+
+            <div id="quiz-container" class="space-y-6">
+                <div class="text-center text-gray-500 py-10 border border-gray-200 rounded-xl bg-white shadow">
+                    <p>Configure your quiz settings above and click "Generate Quiz" to begin.</p>
+                </div>
+            </div>
+            
+            <div id="submit-quiz-container" class="mt-8 hidden">
+                <button onclick="submitQuizForGrading()"
+                        class="w-full bg-accent text-gray-900 py-3 px-6 text-lg font-bold rounded-xl hover:bg-accent/90 transform hover:scale-[1.01] transition-all duration-200 shadow-lg hover:shadow-xl">
+                    Submit Quiz for Grading
+                </button>
+            </div>
+
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-  async function askForQuiz() {
-    const userPrompt = prompt("Enter a quiz topic or instruction:", "Make a quiz about World History");
-    if (!userPrompt) return;
+    let currentQuizData = null; // Store quiz data for future grading
 
-    const container = document.getElementById("quiz-container");
-    container.innerHTML = "<p class='text-gray-600'>Generating quiz...</p>";
+    async function generateAndRenderQuiz() {
+        const prompt = document.getElementById("quizTopic").value.trim();
+        const numQuestions = parseInt(document.getElementById("numQuestions").value);
+        const difficulty = document.getElementById("difficulty").value;
+        const mcqPercent = parseInt(document.getElementById("mcqPercent").value);
+        
+        if (!prompt) {
+            alert("Please enter a topic for the quiz.");
+            return;
+        }
 
-    try {
-      const res = await fetch("/generate_quiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: userPrompt })
-      });
-      const data = await res.json();
+        const container = document.getElementById("quiz-container");
+        const submitContainer = document.getElementById("submit-quiz-container");
+        const generateButton = document.getElementById("generateButton");
 
-      if (data.error) {
-        container.innerHTML = `<p class='text-red-500'>Error: ${data.error}</p>`;
-        return;
-      }
+        // UI Feedback
+        container.innerHTML = "<div class='text-center text-primary/70 py-10'><svg class='animate-spin h-8 w-8 mx-auto text-primary' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'><circle class='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' stroke-width='4'></circle><path class='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path></svg><p class='mt-2 font-medium'>Generating quiz...</p></div>";
+        submitContainer.classList.add('hidden');
+        generateButton.disabled = true;
 
-      renderQuiz(data);
-    } catch (err) {
-      container.innerHTML = `<p class='text-red-500'>Error: ${err.message}</p>`;
+        try {
+            const res = await fetch("/generate_quiz", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    prompt: prompt,
+                    num_questions: numQuestions,
+                    difficulty: difficulty,
+                    mcq_percent: mcqPercent
+                    // Future: Add selected_book/rag_id here
+                })
+            });
+            const data = await res.json();
+
+            if (data.error) {
+                container.innerHTML = `<p class='text-red-600 font-medium p-4 bg-red-50 rounded-lg'>Error: ${data.error}</p>`;
+                return;
+            }
+
+            currentQuizData = data; // Store the full data including answer keys
+            renderQuiz(data);
+            
+            // Show the submit button for future implementation
+            submitContainer.classList.remove('hidden'); 
+
+        } catch (err) {
+            container.innerHTML = `<p class='text-red-600 font-medium p-4 bg-red-50 rounded-lg'>Error: Failed to fetch quiz. Details: ${err.message}</p>`;
+            console.error("Fetch Error:", err);
+        } finally {
+             generateButton.disabled = false;
+        }
     }
-  }
 
-  function renderQuiz(quizData) {
-    const quiz = quizData.quiz;
-    const container = document.getElementById("quiz-container");
+    // Function to render the questions (without showing answers)
+    function renderQuiz(quizData) {
+        const quiz = quizData.quiz;
+        const container = document.getElementById("quiz-container");
 
-    container.innerHTML = `
-      <div>
-        <h3 class="text-2xl font-bold text-gray-800 mb-2">${quiz.title}</h3>
-        <p class="text-gray-500 mb-4">
-          Topic: ${quiz.topic || "N/A"} • Difficulty: ${quiz.metadata.difficulty}
-        </p>
-      </div>
-      ${quiz.questions.map(q => `
-        <div class="border border-gray-200 rounded-xl p-4 mb-4">
-          <p class="font-semibold text-gray-900 mb-3">${q.id}. ${q.question}</p>
-          ${
-            q.type === "mcq"
-              ? q.options.map(opt => `
-                <label class="flex items-center space-x-3 mb-2">
-                  <input type="radio" name="${q.id}" value="${opt}" class="w-5 h-5 text-primary focus:ring-primary">
-                  <span class="text-gray-800">${opt}</span>
-                </label>
-              `).join("")
-              : `
-                <input type="text" name="${q.id}" placeholder="Type your answer"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
-              `
-          }
-        </div>
-      `).join("")}
-    `;
-  }
+        let html = `
+            <div class="bg-primary/10 p-6 rounded-xl shadow-inner mb-8 border-l-4 border-primary">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">${quiz.title}</h3>
+                <p class="text-gray-600 text-sm">
+                    Topic: <span class="font-medium">${quiz.topic || "N/A"}</span> • Difficulty: <span class="font-medium">${quiz.metadata.difficulty}</span> • Total Questions: <span class="font-medium">${quiz.metadata.num_questions}</span>
+                </p>
+            </div>
+        `;
+
+        // Render Questions
+        quiz.questions.forEach((q, index) => {
+            html += `
+                <div id="q-block-${q.id}" class="bg-white border border-gray-200 rounded-xl p-6 mb-4 shadow-md">
+                    <p class="font-semibold text-gray-900 mb-3 text-lg">
+                        ${index + 1}. ${q.question} 
+                        <span class="text-xs font-normal text-gray-500 ml-2">(${q.type.toUpperCase().replace('_', ' ')})</span>
+                    </p>
+                    <div class="answers-section space-y-2">
+            `;
+            
+            if (q.type === "mcq") {
+                // MCQ options rendering
+                q.options.forEach(opt => {
+                    html += `
+                        <label class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                            <input type="radio" name="answer-${q.id}" value="${opt}" data-q-id="${q.id}"
+                                class="w-5 h-5 text-primary focus:ring-primary border-gray-300">
+                            <span class="text-gray-800">${opt}</span>
+                        </label>
+                    `;
+                });
+            } else if (q.type === "short_answer") {
+                // Short Answer input rendering
+                html += `
+                    <textarea name="answer-${q.id}" data-q-id="${q.id}" rows="3" placeholder="Type your answer here (be specific for best grading results)"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 text-gray-700"></textarea>
+                `;
+            }
+
+            html += `
+                    </div>
+                    <div id="feedback-${q.id}" class="mt-4 hidden p-3 rounded-lg border"></div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    // Placeholder for the future grading function
+    function submitQuizForGrading() {
+        alert("Grading functionality is coming soon! You will be able to get instant feedback and explanations.");
+        // FUTURE IMPLEMENTATION:
+        /*
+        1. Collect all user answers from the form inputs.
+        2. Combine user answers and currentQuizData (which contains correct_answer and explanation).
+        3. Send this combined data to a new backend endpoint (e.g., /grade_quiz).
+        4. The backend (or an in-browser script) will compare answers, mark correct/incorrect, and display feedback using the 'explanation'.
+        */
+    }
+
 </script>
 </body>
 </html>
