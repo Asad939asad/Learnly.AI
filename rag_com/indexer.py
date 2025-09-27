@@ -26,7 +26,7 @@ def load_book(path: str):
     loader = PyPDFLoader(path)
     return loader.load()
 
-def indexer(BOOK_NAME: str):
+def indexer(embeddings, BOOK_NAME: str):
     # Step 1: Find the book
     book_path = find_book(BOOK_NAME, BOOKS_FOLDER)
     if not book_path:
@@ -51,7 +51,7 @@ def indexer(BOOK_NAME: str):
     print(f"Split {len(docs)} pages into {len(chunks)} chunks (≤100 tokens each)")
 
     # Step 4: Initialize embeddings
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    # embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
     # Step 5: Save each book in its own folder
     book_index_folder = os.path.join(INDEX_FOLDER, BOOK_NAME.replace(" ", "_"))
@@ -66,12 +66,16 @@ def indexer(BOOK_NAME: str):
     return True
 
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        book_name = sys.argv[1]
-        success = indexer(book_name)
-        if not success:
-            sys.exit(1)
-    else:
-        print("Usage: python indexer.py <book_name>")
-        sys.exit(1)
+# def main():
+#     if len(sys.argv) > 1:
+#         book_name = sys.argv[1]
+#         success = indexer(book_name)
+#         if not success:
+#             sys.exit(1)
+#         print("Indexing done")
+#     else:
+#         print("Usage: python indexer.py <book_name>")
+#         sys.exit(1)
+
+# if __name__ == "__main__":
+#     main()
