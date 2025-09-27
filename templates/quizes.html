@@ -101,57 +101,95 @@
 </div>
 
 <script>
-  // Two sample quizzes to simulate generation
+  // Sample quizzes in the structured JSON format
   const sampleQuizzes = [
     {
-      title: "Basic Math Quiz",
-      questions: [
-        {
-          id: 1,
-          question: "What is 5 + 7?",
-          options: ["10", "11", "12", "13"]
+      "quiz": {
+        "title": "Geography Basics",
+        "topic": "Geography",
+        "metadata": {
+          "difficulty": "easy",
+          "num_questions": 2,
+          "generated_at": "2025-09-27T12:00:00Z"
         },
-        {
-          id: 2,
-          question: "What is the square root of 81?",
-          options: ["7", "8", "9", "10"]
-        }
-      ]
+        "questions": [
+          {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the capital of France?",
+            "options": ["Berlin", "Madrid", "Paris", "Rome"],
+            "correct_answer": "Paris",
+            "explanation": "Paris is the capital of France."
+          },
+          {
+            "id": "q2",
+            "type": "short_answer",
+            "question": "Name the largest ocean on Earth.",
+            "correct_answer": "Pacific Ocean",
+            "explanation": "The Pacific Ocean is the largest ocean."
+          }
+        ]
+      }
     },
     {
-      title: "General Science Quiz",
-      questions: [
-        {
-          id: 1,
-          question: "Which planet is known as the Red Planet?",
-          options: ["Earth", "Mars", "Jupiter", "Venus"]
+      "quiz": {
+        "title": "Science Basics",
+        "topic": "Science",
+        "metadata": {
+          "difficulty": "medium",
+          "num_questions": 2,
+          "generated_at": "2025-09-27T12:05:00Z"
         },
-        {
-          id: 2,
-          question: "What is H2O commonly known as?",
-          options: ["Oxygen", "Hydrogen", "Water", "Carbon Dioxide"]
-        }
-      ]
+        "questions": [
+          {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which planet is known as the Red Planet?",
+            "options": ["Earth", "Mars", "Jupiter", "Venus"],
+            "correct_answer": "Mars",
+            "explanation": "Mars appears red due to iron oxide on its surface."
+          },
+          {
+            "id": "q2",
+            "type": "short_answer",
+            "question": "What gas do humans need to breathe?",
+            "correct_answer": "Oxygen",
+            "explanation": "Humans inhale oxygen to survive."
+          }
+        ]
+      }
     }
   ];
 
   let currentQuizIndex = 0;
 
-  function renderQuiz(quiz) {
+  function renderQuiz(quizData) {
+    const quiz = quizData.quiz;
     const container = document.getElementById("quiz-container");
+
     container.innerHTML = `
-      <h3 class="text-2xl font-bold text-gray-800 mb-4">${quiz.title}</h3>
+      <div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">${quiz.title}</h3>
+        <p class="text-gray-500 mb-4">
+          Topic: ${quiz.topic || "N/A"} • Difficulty: ${quiz.metadata.difficulty}
+        </p>
+      </div>
       ${quiz.questions.map(q => `
-        <div class="border border-gray-200 rounded-xl p-4">
+        <div class="border border-gray-200 rounded-xl p-4 mb-4">
           <p class="font-semibold text-gray-900 mb-3">${q.id}. ${q.question}</p>
-          <div class="space-y-2">
-            ${q.options.map(opt => `
-              <label class="flex items-center space-x-3">
-                <input type="radio" name="q${q.id}" value="${opt}" class="w-5 h-5 text-primary focus:ring-primary">
-                <span class="text-gray-800">${opt}</span>
-              </label>
-            `).join("")}
-          </div>
+          ${
+            q.type === "mcq"
+              ? q.options.map(opt => `
+                <label class="flex items-center space-x-3 mb-2">
+                  <input type="radio" name="${q.id}" value="${opt}" class="w-5 h-5 text-primary focus:ring-primary">
+                  <span class="text-gray-800">${opt}</span>
+                </label>
+              `).join("")
+              : `
+                <input type="text" name="${q.id}" placeholder="Type your answer"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+              `
+          }
         </div>
       `).join("")}
     `;
@@ -162,7 +200,7 @@
     renderQuiz(sampleQuizzes[currentQuizIndex]);
   }
 
-  // Load default quiz on page load
+  // Load default quiz
   window.onload = () => {
     renderQuiz(sampleQuizzes[currentQuizIndex]);
   };
