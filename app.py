@@ -4,7 +4,8 @@ from werkzeug.utils import secure_filename
 import os
 import subprocess
 import sys
-from backend.quizes import generate_quiz
+# UPDATED IMPORT: Import both generate_quiz and the new grade_quiz function
+from backend.quizes import generate_quiz, grade_quiz 
 from backend.flashcards import generate_flashcards
 from backend.query_rag import query_book_rag
 from rag_com.indexer import indexer
@@ -34,17 +35,20 @@ def dashboard():
 def quizes():
     return render_template("quizes.html", active_page='quizes')
 
+# =========================================================
+# QUIZ GENERATION ROUTE (Updated to accept parameters)
+# =========================================================
 @app.route("/generate_quiz", methods=["POST"])
 def generate_quiz_route():
     data = request.json
-    # 1. Retrieve the required parameters from the JSON body
+    
+    # Safely extract all required parameters from the frontend payload
     prompt = data.get("prompt", "Generate a general knowledge quiz with 3 questions.")
-    num_questions = data.get("num_questions", 10)  # Default added for safety
-    difficulty = data.get("difficulty", "Medium") # Default added for safety
-    mcq_percent = data.get("mcq_percent", 70)     # Default added for safety
+    num_questions = data.get("num_questions", 10)
+    difficulty = data.get("difficulty", "Medium")
+    mcq_percent = data.get("mcq_percent", 70) 
 
     try:
-        # 2. Pass all parameters to the updated generate_quiz function
         quiz_json = generate_quiz(
             prompt=prompt, 
             num_questions=num_questions, 
@@ -54,6 +58,27 @@ def generate_quiz_route():
         return jsonify(quiz_json)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# =========================================================
+# NEW GRADING ROUTE
+# =========================================================
+@app.route("/grade_quiz", methods=["POST"])
+def grade_quiz_route():
+    data = request.json
+    quiz_data = data.get("quiz_data")
+    user_answers = data.get("user_answers")
+    
+    if not quiz_data or not user_answers:
+        return jsonify({"error": "Missing quiz data or user answers"}), 400
+
+    try:
+        # Call the new grading function
+        graded_results = grade_quiz(quiz_data, user_answers)
+        return jsonify(graded_results)
+    except Exception as e:
+        print(f"Grading Error: {str(e)}")
+        return jsonify({"error": f"Failed to grade quiz: {str(e)}"}), 500
+# =========================================================
 
 @app.route("/flashcards")
 def flashcards():
