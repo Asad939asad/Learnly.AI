@@ -6,6 +6,7 @@ import sys
 from backend.quizes import generate_quiz
 from backend.flashcards import generate_flashcards
 from backend.query_rag import query_book_rag
+from backend.slide_decks import generate_slide_deck  # Import the slide deck generator
 
 app = Flask(__name__)
 app.config['BOOKS_FOLDER'] = 'books'
@@ -41,6 +42,17 @@ def flashcards():
 @app.route("/slidedecks")
 def slidedecks():
     return render_template("slide_decks.html", active_page='slidedecks')
+
+@app.route("/generate_slide_deck", methods=["POST"])
+def generate_slide_deck_route():
+    data = request.json
+    prompt = data.get("prompt", "Generate a presentation on the topic of Artificial Intelligence.")
+
+    try:
+        slide_deck_json = generate_slide_deck(prompt)
+        return jsonify(slide_deck_json)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/manage_books")
 def manage_books():
