@@ -88,11 +88,10 @@
         <p class="text-white/90">Test your knowledge and sharpen your skills</p>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-        <button onclick="generateQuiz()"
-                class="mb-6 w-full bg-primary text-white py-3 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
-          Generate Quiz
-        </button>
+      <button onclick="askForQuiz()" 
+        class="mb-6 w-full bg-primary text-white py-3 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
+  Generate Quiz
+</button>
 
         <div id="quiz-container" class="space-y-6"></div>
       </div>
@@ -101,67 +100,31 @@
 </div>
 
 <script>
-  // Sample quizzes in the structured JSON format
-  const sampleQuizzes = [
-    {
-      "quiz": {
-        "title": "Geography Basics",
-        "topic": "Geography",
-        "metadata": {
-          "difficulty": "easy",
-          "num_questions": 2,
-          "generated_at": "2025-09-27T12:00:00Z"
-        },
-        "questions": [
-          {
-            "id": "q1",
-            "type": "mcq",
-            "question": "What is the capital of France?",
-            "options": ["Berlin", "Madrid", "Paris", "Rome"],
-            "correct_answer": "Paris",
-            "explanation": "Paris is the capital of France."
-          },
-          {
-            "id": "q2",
-            "type": "short_answer",
-            "question": "Name the largest ocean on Earth.",
-            "correct_answer": "Pacific Ocean",
-            "explanation": "The Pacific Ocean is the largest ocean."
-          }
-        ]
-      }
-    },
-    {
-      "quiz": {
-        "title": "Science Basics",
-        "topic": "Science",
-        "metadata": {
-          "difficulty": "medium",
-          "num_questions": 2,
-          "generated_at": "2025-09-27T12:05:00Z"
-        },
-        "questions": [
-          {
-            "id": "q1",
-            "type": "mcq",
-            "question": "Which planet is known as the Red Planet?",
-            "options": ["Earth", "Mars", "Jupiter", "Venus"],
-            "correct_answer": "Mars",
-            "explanation": "Mars appears red due to iron oxide on its surface."
-          },
-          {
-            "id": "q2",
-            "type": "short_answer",
-            "question": "What gas do humans need to breathe?",
-            "correct_answer": "Oxygen",
-            "explanation": "Humans inhale oxygen to survive."
-          }
-        ]
-      }
-    }
-  ];
+  async function askForQuiz() {
+    const userPrompt = prompt("Enter a quiz topic or instruction:", "Make a quiz about World History");
+    if (!userPrompt) return;
 
-  let currentQuizIndex = 0;
+    const container = document.getElementById("quiz-container");
+    container.innerHTML = "<p class='text-gray-600'>Generating quiz...</p>";
+
+    try {
+      const res = await fetch("/generate_quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userPrompt })
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        container.innerHTML = `<p class='text-red-500'>Error: ${data.error}</p>`;
+        return;
+      }
+
+      renderQuiz(data);
+    } catch (err) {
+      container.innerHTML = `<p class='text-red-500'>Error: ${err.message}</p>`;
+    }
+  }
 
   function renderQuiz(quizData) {
     const quiz = quizData.quiz;
@@ -194,16 +157,6 @@
       `).join("")}
     `;
   }
-
-  function generateQuiz() {
-    currentQuizIndex = (currentQuizIndex + 1) % sampleQuizzes.length;
-    renderQuiz(sampleQuizzes[currentQuizIndex]);
-  }
-
-  // Load default quiz
-  window.onload = () => {
-    renderQuiz(sampleQuizzes[currentQuizIndex]);
-  };
 </script>
 </body>
 </html>

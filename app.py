@@ -1,40 +1,38 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify
+from backend.quizes import generate_quiz
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def dashboard():
-    return render_template('dashboard.html', active_page='dashboard')
+    return render_template("dashboard.html")
 
-@app.route('/quizes')
+@app.route("/quizes")
 def quizes():
-    return render_template('quizes.html', active_page='quizes')
+    return render_template("quizes.html")
 
-@app.route('/flashcards')
+@app.route("/generate_quiz", methods=["POST"])
+def generate_quiz_route():
+    data = request.json
+    prompt = data.get("prompt", "Generate a general knowledge quiz with 3 questions.")
+
+    try:
+        quiz_json = generate_quiz(prompt)
+        return jsonify(quiz_json)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/flashcards")
 def flashcards():
-    return render_template('flash_cards.html', active_page='flashcards')
+    return render_template("flash_cards.html")
 
-@app.route('/slidedecks')
+@app.route("/slidedecks")
 def slidedecks():
-    return render_template('slide_decks.html', active_page='slidedecks')
+    return render_template("slide_decks.html")
 
-@app.route('/books')
+@app.route("/books")
 def books():
-    return render_template('manage_books.html', active_page='books')
+    return render_template("manage_books.html")
 
-@app.route('/submit_user_info', methods=['POST'])
-def submit_user_info():
-    data = request.get_json()
-    return jsonify({
-        'status': 'success',
-        'class': data.get('class'),
-        'study_topic': data.get('study_topic'),
-        'subjects': data.get('subjects', [])
-    })
-
-@app.route('/logout')
-def logout():
-    return redirect(url_for('dashboard'))
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
