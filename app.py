@@ -4,14 +4,29 @@ app = Flask(__name__)
 
 @app.route('/')
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', active_page='dashboard')
+
+@app.route('/quizes')
+def quizes():
+    return render_template('dashboard.html', active_page='quizes')
+
+@app.route('/flashcards')
+def flashcards():
+    return render_template('dashboard.html', active_page='flashcards')
+
+@app.route('/slidedecks')
+def slidedecks():
+    return render_template('dashboard.html', active_page='slidedecks')
+
+@app.route('/books')
+def books():
+    return render_template('dashboard.html', active_page='books')
 
 @app.route('/submit_user_info', methods=['POST'])
 def submit_user_info():
     data = request.get_json()
     name = data.get('name')
     user_class = data.get('class')
-    # In a real application, you might want to store this in a database
     return jsonify({
         'status': 'success',
         'name': name,
