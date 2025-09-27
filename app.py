@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session
 from langchain_core import embeddings
 from werkzeug.utils import secure_filename
 import os
@@ -17,6 +17,12 @@ embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-
 app = Flask(__name__)
 app.config['BOOKS_FOLDER'] = 'books'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+# app.secret_key = 'your-secret-key-here'  # Required for session
+
+# Global variables to store dashboard inputs
+global_class = None
+global_subjects = []
+global_study_topic = None
 
 # Ensure required directories exist with proper permissions
 os.makedirs(app.config['BOOKS_FOLDER'], exist_ok=True)
@@ -30,6 +36,17 @@ os.chmod(CHROMA_INDEX_DIR, 0o777)  # Full read/write permissions
 @app.route("/")
 def dashboard():
     return render_template("dashboard.html", active_page='dashboard')
+
+@app.route('/submit_user_info', methods=['POST'])
+def submit_user_info():
+    global global_class, global_subjects, global_study_topic
+    
+    data = request.get_json()
+    global_class = data.get('class')
+    global_subjects = data.get('subjects', [])
+    global_study_topic = data.get('study_topic')
+    
+    return jsonify({"status": "success"})
 
 @app.route("/quizes")
 def quizes():
@@ -204,11 +221,35 @@ def delete_book():
 
 @app.route('/generate_flashcards', methods=['POST'])
 def create_flashcards():
-    data = request.get_json()
-    use_rag = data.get('use_rag', False)
+    global global_class, global_subjects, global_study_topic
     
-    # For now, just return sample flashcards
-    return jsonify(generate_flashcards(use_rag))
+    # Get RAG settings from the flashcards page
+    data = request.get_json()
+    rag = data.get('use_rag', False)
+    book_name = data.get('book_name')  # Optional parameter
+    
+    # Use global variables from dashboard
+    if not all([global_class, global_subjects, global_study_topic]):
+        return jsonify({
+            "status": "error",
+            "message": "Please fill out the study information on the dashboard first"
+        }), 400
+    
+    # Generate flashcards using global variables
+    flashcards = generate_flashcards(
+        embeddings=embeddings,
+        sample_query=global_study_topic,
+        class_name=f"Class {global_class}",
+        subjects=global_subjects,
+        rag=rag,
+        book_name=book_name
+    )
+    
+    return jsonify({
+        "status": "success",
+        "flashcards": flashcards
+    })
+    
 
 @app.route('/query_book', methods=['POST'])
 def query_book():
