@@ -220,8 +220,8 @@ def query_book():
         return jsonify({'status': 'error', 'message': 'Book name and query are required'}), 400
     
     try:
-        # Use the temporary query function for testing
-        response_text = query_book_content(book_name, query)
+        # Use the RAG query function
+        response_text = query_book_content(embeddings, book_name, query)
         print(f"Query received - Book: {book_name}, Query: {query}")
         print(f"Response: {response_text}")
         
