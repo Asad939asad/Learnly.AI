@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
+from langchain_core import embeddings
 from werkzeug.utils import secure_filename
 import os
 import subprocess
@@ -7,16 +8,22 @@ from backend.quizes import generate_quiz
 from backend.flashcards import generate_flashcards
 from backend.query_rag import query_book_rag
 from rag_com.indexer import indexer
+from backend.slide_decks import generate_slide_deck
 from langchain_huggingface import HuggingFaceEmbeddings
 
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
 app = Flask(__name__)
 app.config['BOOKS_FOLDER'] = 'books'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Ensure books directory exists
+# Ensure required directories exist with proper permissions
 os.makedirs(app.config['BOOKS_FOLDER'], exist_ok=True)
+os.chmod(app.config['BOOKS_FOLDER'], 0o777)  # Full read/write permissions
+
+# Ensure Chroma index directory exists with proper permissions
+CHROMA_INDEX_DIR = os.path.join(os.getcwd(), 'chroma_index')
+os.makedirs(CHROMA_INDEX_DIR, exist_ok=True)
+os.chmod(CHROMA_INDEX_DIR, 0o777)  # Full read/write permissions
 
 @app.route("/")
 def dashboard():
@@ -45,6 +52,17 @@ def flashcards():
 @app.route("/slidedecks")
 def slidedecks():
     return render_template("slide_decks.html", active_page='slidedecks')
+
+@app.route("/generate_slide_deck", methods=["POST"])
+def generate_slide_deck_route():
+    data = request.json
+    prompt = data.get("prompt", "Generate a presentation on the topic of Artificial Intelligence.")
+
+    try:
+        slide_deck_json = generate_slide_deck(prompt)
+        return jsonify(slide_deck_json)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/manage_books")
 def manage_books():

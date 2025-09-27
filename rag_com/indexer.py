@@ -55,15 +55,23 @@ def indexer(embeddings, BOOK_NAME: str):
 
     # Step 5: Save each book in its own folder
     book_index_folder = os.path.join(INDEX_FOLDER, BOOK_NAME.replace(" ", "_"))
-
-    db = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        persist_directory=book_index_folder
-    )
-    db.persist()
-    print(f"Index for '{BOOK_NAME}' saved in {book_index_folder}")
-    return True
+    
+    # Ensure the book index folder exists and has proper permissions
+    os.makedirs(book_index_folder, exist_ok=True)
+    os.chmod(book_index_folder, 0o777)  # Full read/write permissions
+    
+    try:
+        db = Chroma.from_documents(
+            documents=chunks,
+            embedding=embeddings,
+            persist_directory=book_index_folder
+        )
+        db.persist()
+        print(f"Index for '{BOOK_NAME}' saved in {book_index_folder}")
+        return True
+    except Exception as e:
+        print(f"Error creating index: {str(e)}")
+        return False
 
 
 # def main():
