@@ -6,6 +6,10 @@ import sys
 from backend.quizes import generate_quiz
 from backend.flashcards import generate_flashcards
 from backend.query_rag import query_book_rag
+from rag_com.indexer import indexer
+from langchain_huggingface import HuggingFaceEmbeddings
+
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 app = Flask(__name__)
 app.config['BOOKS_FOLDER'] = 'books'
@@ -83,41 +87,44 @@ def upload_and_index_book():
         return jsonify({'status': 'error', 'message': 'No file selected'}), 400
     
     if file and file.filename.lower().endswith('.pdf'):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['BOOKS_FOLDER'], filename)
-        file.save(file_path)
-        
-        # Extract book name without extension for indexing
-        book_name = os.path.splitext(filename)[0]
-        print(f"Indexing book: {book_name}")
-        
         try:
-            # Call the indexer
-            indexer_path = os.path.join(os.getcwd(), 'rag_com', 'indexer.py')
-            result = subprocess.run([
-                sys.executable, indexer_path, book_name
-            ], capture_output=True, text=True, cwd=os.getcwd())
+            # Save the file
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['BOOKS_FOLDER'], filename)
+            file.save(file_path)
+            print(f"Book saved to: {file_path}")
             
-            print(f"Indexer output: {result.stdout}")
-            print(f"Indexer errors: {result.stderr}")
+            # Extract book name without extension for indexing
+            book_name = os.path.splitext(filename)[0]
+            print(f"Indexing book: {book_name}")
             
-            if result.returncode == 0:
+            # Call the indexer function directly
+            success = indexer(embeddings, book_name)
+            
+            if success:
                 print("Indexing done")
                 return jsonify({
                     'status': 'success',
                     'message': 'Book uploaded and indexed successfully!'
                 })
             else:
-                print(f"Indexing failed with return code: {result.returncode}")
+                print("Indexing failed")
                 return jsonify({
                     'status': 'error',
-                    'message': f'Indexing failed: {result.stderr}'
+                    'message': 'Failed to index the book'
                 }), 500
                 
         except Exception as e:
+            print(f"Error during upload/indexing: {str(e)}")
+            # If there was an error, try to clean up the uploaded file
+            try:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            except:
+                pass
             return jsonify({
                 'status': 'error',
-                'message': f'Error during indexing: {str(e)}'
+                'message': f'Error during upload/indexing: {str(e)}'
             }), 500
     else:
         return jsonify({'status': 'error', 'message': 'Only PDF files are supported'}), 400
