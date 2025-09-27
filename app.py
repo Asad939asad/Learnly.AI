@@ -1,22 +1,26 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, make_response, session, send_file
+from datetime import datetime
 from langchain_core import embeddings
 from werkzeug.utils import secure_filename
 import os
 import subprocess
 import sys
+import io
 # UPDATED IMPORT: Import both generate_quiz and the new grade_quiz function
 from backend.quizes import generate_quiz, grade_quiz 
 from backend.flashcards import generate_flashcards
 from backend.query_rag import query_book_rag
 from rag_com.indexer import indexer
-from backend.slide_decks import generate_slide_deck
+from backend.slide_decks import generate_slide_deck, create_pdf_from_slides
 from backend.manage_books import query_book_content
 from langchain_huggingface import HuggingFaceEmbeddings
 
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 app = Flask(__name__)
 app.config['BOOKS_FOLDER'] = 'books'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+from dotenv import load_dotenv
+load_dotenv()
 # app.secret_key = 'your-secret-key-here'  # Required for session
 
 # Global variables to store dashboard inputs
@@ -108,13 +112,28 @@ def slidedecks():
 
 @app.route("/generate_slide_deck", methods=["POST"])
 def generate_slide_deck_route():
-    data = request.json
-    prompt = data.get("prompt", "Generate a presentation on the topic of Artificial Intelligence.")
-
     try:
-        slide_deck_json = generate_slide_deck(prompt)
+        data = request.json
+        prompt = data.get("prompt")
+        use_rag = bool(data.get("use_rag", False))
+        book_name = data.get("book_name") if use_rag else None
+
+        if not prompt:
+            return jsonify({"error": "Prompt is required"}), 400
+        if use_rag and not book_name:
+            return jsonify({"error": "book_name is required when use_rag is True"}), 400
+
+        print(f"Prompt: {prompt}, Use RAG: {use_rag}, Book Name: {book_name}")
+
+        # Generate slide deck using the original function
+        slide_deck_json = generate_slide_deck(embeddings, prompt, use_rag, book_name)
+        print(f"SLLIDE GENERATION DONE")
         return jsonify(slide_deck_json)
+
     except Exception as e:
+        print(f"Error generating slide deck: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 @app.route("/manage_books")
@@ -288,6 +307,51 @@ def get_available_books():
                 'type': file_type
             })
     return books
+
+@app.route('/download_slide_deck_pdf', methods=['POST'])
+def download_slide_deck_pdf():
+    try:
+        data = request.get_json()
+        if not data or 'slide_deck' not in data:
+            return jsonify({'error': 'No slide deck data provided'}), 400
+            
+        try:
+            # Generate PDF
+            pdf_data = create_pdf_from_slides(data)
+            if not pdf_data:
+                return jsonify({'error': 'Failed to generate PDF - empty data'}), 500
+                
+            # Create buffer with PDF data
+            buffer = io.BytesIO(pdf_data)
+            buffer.seek(0)  # Move to start of buffer
+            
+            # Get timestamp for filename
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            
+            # Create sanitized title from slide deck title
+            title = data['slide_deck']['title']
+            safe_title = "".join(x for x in title if x.isalnum() or x in (' ', '-', '_')).strip()
+            safe_title = safe_title.replace(' ', '_').lower()
+            
+            # Send file with custom filename
+            return send_file(
+                buffer,
+                mimetype='application/pdf',
+                as_attachment=True,
+                download_name=f'{safe_title}_{timestamp}.pdf'
+            )
+            
+        except Exception as pdf_error:
+            print(f"PDF Generation Error: {str(pdf_error)}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({'error': f'PDF Generation failed: {str(pdf_error)}'}), 500
+            
+    except Exception as e:
+        print(f"Request Processing Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Request processing failed: {str(e)}'}), 500
 
 @app.route('/logout')
 def logout():
