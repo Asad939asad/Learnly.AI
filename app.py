@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 import os
+import subprocess
+import sys
 from backend.quizes import generate_quiz
 from backend.flashcards import generate_flashcards
+from backend.query_rag import query_book_rag
 
 app = Flask(__name__)
 app.config['BOOKS_FOLDER'] = 'books'
@@ -70,6 +73,49 @@ def upload_book():
             'message': 'Book uploaded successfully'
         })
 
+@app.route('/upload_and_index_book', methods=['POST'])
+def upload_and_index_book():
+    if 'book' not in request.files:
+        return jsonify({'status': 'error', 'message': 'No file provided'}), 400
+    
+    file = request.files['book']
+    if file.filename == '':
+        return jsonify({'status': 'error', 'message': 'No file selected'}), 400
+    
+    if file and file.filename.lower().endswith('.pdf'):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['BOOKS_FOLDER'], filename)
+        file.save(file_path)
+        
+        # Extract book name without extension for indexing
+        book_name = os.path.splitext(filename)[0]
+        
+        try:
+            # Call the indexer
+            indexer_path = os.path.join(os.getcwd(), 'rag_com', 'indexer.py')
+            result = subprocess.run([
+                sys.executable, indexer_path, book_name
+            ], capture_output=True, text=True, cwd=os.getcwd())
+            
+            if result.returncode == 0:
+                return jsonify({
+                    'status': 'success',
+                    'message': 'Book uploaded and indexed successfully!'
+                })
+            else:
+                return jsonify({
+                    'status': 'error',
+                    'message': f'Indexing failed: {result.stderr}'
+                }), 500
+                
+        except Exception as e:
+            return jsonify({
+                'status': 'error',
+                'message': f'Error during indexing: {str(e)}'
+            }), 500
+    else:
+        return jsonify({'status': 'error', 'message': 'Only PDF files are supported'}), 400
+
 @app.route('/delete_book', methods=['POST'])
 def delete_book():
     data = request.get_json()
@@ -96,6 +142,29 @@ def create_flashcards():
     
     # For now, just return sample flashcards
     return jsonify(generate_flashcards(use_rag))
+
+@app.route('/query_book', methods=['POST'])
+def query_book():
+    data = request.get_json()
+    book_name = data.get('book_name')
+    query = data.get('query')
+    
+    if not book_name or not query:
+        return jsonify({'status': 'error', 'message': 'Book name and query are required'}), 400
+    
+    try:
+        # Call the RAG query function
+        response_text = query_book_rag(book_name, query)
+        
+        return jsonify({
+            'status': 'success',
+            'response': response_text
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Error processing query: {str(e)}'
+        }), 500
 
 def get_available_books():
     books = []
