@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnly.ai - Manage Books</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9f3dff',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen">
+        <!-- Sidebar [Same as other pages] -->
+        <div class="w-64 bg-primary text-white">
+            <!-- [Previous sidebar content] -->
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Bar [Same as other pages] -->
+            <div class="bg-white border-b p-4 flex justify-between items-center">
+                <!-- [Previous top bar content] -->
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="max-w-7xl mx-auto p-6">
+                <div class="mb-6 gradient-bg rounded-xl p-6 text-white">
+                    <h2 class="text-3xl font-bold mb-2">Manage Books</h2>
+                    <p class="text-lg text-white/90">Upload and manage your books for flash cards</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                    <!-- Upload Area -->
+                    <div class="mb-8">
+                        <form id="uploadForm" class="space-y-4">
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+                                <input type="file" id="bookFile" class="hidden" accept=".pdf,.txt,.doc,.docx">
+                                <label for="bookFile" class="cursor-pointer">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                    <p class="mt-2 text-sm text-gray-600">Click to upload or drag and drop</p>
+                                    <p class="text-xs text-gray-500">PDF, TXT, DOC, DOCX (Max 16MB)</p>
+                                </label>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+                                Upload Book
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Books List -->
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Your Books</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="booksList">
+                            <!-- Books will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle file upload
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('bookFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('book', file);
+            
+            try {
+                const response = await fetch('/upload_book', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert('Book uploaded successfully!');
+                    loadBooks();
+                } else {
+                    alert(data.message || 'Error uploading book');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error uploading book');
+            }
+        };
+
+        // Load books list
+        async function loadBooks() {
+            try {
+                const response = await fetch('/list_books');
+                const data = await response.json();
+                
+                const booksList = document.getElementById('booksList');
+                booksList.innerHTML = '';
+                
+                data.books.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow';
+                    bookCard.innerHTML = `
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h4 class="text-lg font-medium text-gray-900">${book.name}</h4>
+                                <p class="text-sm text-gray-500">${book.type}</p>
+                            </div>
+                            <button onclick="deleteBook('${book.name}')" class="text-red-500 hover:text-red-700">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    booksList.appendChild(bookCard);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Delete book
+        async function deleteBook(bookName) {
+            if (!confirm('Are you sure you want to delete this book?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/delete_book', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: bookName })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    loadBooks();
+                } else {
+                    alert(data.message || 'Error deleting book');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting book');
+            }
+        }
+
+        // Load books on page load
+        loadBooks();
+
+        // Handle drag and drop
+        const dropZone = document.querySelector('.border-dashed');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('border-primary');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('border-primary');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('bookFile').files = files;
+        }
+    </script>
+</body>
+</html>

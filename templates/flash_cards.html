@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnly.ai - Flash Cards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9f3dff',
+                        accent: '#8bff3d',
+                        secondary: '#ff3d9f',
+                        tertiary: '#3d9fff',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .card-flip {
+            perspective: 1500px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-flip.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .card-content {
+            transform: translateZ(60px);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #9f3dff 0%, #ff3d9f 100%);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-primary text-white">
+            <div class="p-4">
+                <h1 class="text-2xl font-bold mb-8 flex items-center">
+                    <svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Learnly.ai
+                </h1>
+                <nav class="space-y-2">
+                    <a href="/" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+                    <a href="/quizes" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                        <span class="font-medium">Quizes</span>
+                    </a>
+                    <a href="/flashcards" class="flex items-center space-x-3 p-3 rounded-lg bg-white/10">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                        </svg>
+                        <span class="font-medium">Flash Cards</span>
+                    </a>
+                    <a href="/slidedecks" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+                        </svg>
+                        <span class="font-medium">Slide Decks</span>
+                    </a>
+                    <a href="/manage_books" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        <span class="font-medium">Manage Books</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Bar -->
+            <div class="bg-white border-b p-4 flex justify-between items-center sticky top-0 z-10">
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-600 hover:text-primary font-medium">Home</a>
+                    <a href="#" class="text-gray-600 hover:text-primary font-medium">Explore</a>
+                    <a href="#" class="text-gray-600 hover:text-primary font-medium">Resources</a>
+                    <a href="#" class="text-gray-600 hover:text-primary font-medium">Help</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <img src="https://ui-avatars.com/api/?name=John" alt="John" class="w-8 h-8 rounded-full ring-2 ring-primary">
+                        <span class="text-sm font-semibold text-gray-800">John</span>
+                    </div>
+                    <a href="/logout" class="text-gray-600 hover:text-gray-800">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="max-w-7xl mx-auto p-6">
+                <!-- Welcome Banner -->
+                <div class="mb-6 gradient-bg rounded-xl p-6 text-white">
+                    <h2 class="text-3xl font-bold mb-2">Flash Cards</h2>
+                    <p class="text-lg text-white/90">Create and study flash cards from your books</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                    <!-- Book Selection and Controls -->
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex-1 max-w-md flex space-x-2">
+                            <div class="flex-1 relative">
+                                <select id="bookSelect" class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary appearance-none bg-white">
+                                    <option value="">Select a book</option>
+                                    {% for book in books %}
+                                    <option value="{{ book.name }}">{{ book.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <a href="/manage_books" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </a>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="useRAG" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
+                                <span class="text-sm font-medium text-gray-700">Use RAG Pipeline</span>
+                            </label>
+                            <button onclick="generateFlashcards()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                Generate Cards
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Flash Cards Display -->
+                    <div class="relative h-[500px] flex items-center justify-center">
+                        <div id="flashcardContainer" class="w-[600px] h-[385px] cursor-pointer" onclick="flipCard()">
+                            <div id="flashcard" class="card-flip w-full h-full">
+                                <div class="card-front bg-white rounded-xl border-2 border-primary p-8 flex items-center justify-center shadow-lg">
+                                    <div class="card-content text-center">
+                                        <p id="questionText" class="text-3xl font-medium">Select a book and generate flash cards to begin</p>
+                                    </div>
+                                </div>
+                                <div class="card-back bg-white rounded-xl border-2 border-primary p-8 flex items-center justify-center shadow-lg">
+                                    <div class="card-content text-center">
+                                        <p id="answerText" class="text-2xl font-medium"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Controls -->
+                        <div class="absolute left-0 right-0 bottom-4 flex justify-center items-center space-x-4">
+                            <button onclick="previousCard()" class="p-2 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors">
+                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <span id="cardCount" class="text-sm font-medium text-gray-500">0/0</span>
+                            <button onclick="nextCard()" class="p-2 rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors">
+                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFlashcards = [];
+        let currentCardIndex = 0;
+
+        // Generate flashcards
+        async function generateFlashcards() {
+            const useRAG = document.getElementById('useRAG').checked;
+
+            try {
+                const response = await fetch('/generate_flashcards', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        use_rag: useRAG
+                    })
+                });
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    currentFlashcards = data.flashcards;
+                    currentCardIndex = 0;
+                    updateCardDisplay();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error generating flashcards');
+            }
+        }
+
+        // Flashcard navigation with animations
+        function nextCard() {
+            if (currentCardIndex < currentFlashcards.length - 1) {
+                const container = document.getElementById('flashcardContainer');
+                container.style.opacity = '0';
+                container.style.transform = 'translateX(20px)';
+                
+                setTimeout(() => {
+                    currentCardIndex++;
+                    updateCardDisplay();
+                    container.style.opacity = '1';
+                    container.style.transform = 'translateX(0)';
+                }, 200);
+            }
+        }
+
+        function previousCard() {
+            if (currentCardIndex > 0) {
+                const container = document.getElementById('flashcardContainer');
+                container.style.opacity = '0';
+                container.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    currentCardIndex--;
+                    updateCardDisplay();
+                    container.style.opacity = '1';
+                    container.style.transform = 'translateX(0)';
+                }, 200);
+            }
+        }
+
+        // Flip card with enhanced animation
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            card.classList.toggle('flipped');
+        }
+
+        // Update card display
+        function updateCardDisplay() {
+            const card = document.getElementById('flashcard');
+            card.classList.remove('flipped');
+            
+            if (currentFlashcards.length > 0) {
+                const currentCard = currentFlashcards[currentCardIndex];
+                document.getElementById('questionText').textContent = currentCard.question;
+                document.getElementById('answerText').textContent = currentCard.answer;
+                document.getElementById('cardCount').textContent = `${currentCardIndex + 1}/${currentFlashcards.length}`;
+            }
+        }
+
+        // Add transition styles
+        document.getElementById('flashcardContainer').style.transition = 'all 0.2s ease-in-out';
+    </script>
+</body>
+</html>
