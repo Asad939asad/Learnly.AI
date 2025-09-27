@@ -255,9 +255,11 @@
 
         // Load books list
         async function loadBooks() {
+            console.log('Loading books...');
             try {
                 const response = await fetch('/list_books');
                 const data = await response.json();
+                console.log('Received books:', data);
                 availableBooks = data.books;
                 
                 const booksList = document.getElementById('booksList');
@@ -322,11 +324,24 @@
             });
             
             // Enable/disable query input based on selection
-            select.addEventListener('change', function() {
-                const hasSelection = this.value !== '';
+            function updateQueryInputState() {
+                const hasSelection = select.value !== '';
                 queryInput.disabled = !hasSelection;
                 sendBtn.disabled = !hasSelection;
-            });
+                
+                if (hasSelection) {
+                    queryInput.focus();  // Focus the input when a book is selected
+                    queryInput.placeholder = `Ask a question about "${select.value}"...`;
+                } else {
+                    queryInput.placeholder = "Select a book first...";
+                }
+            }
+            
+            // Add change event listener
+            select.addEventListener('change', updateQueryInputState);
+            
+            // Initial state
+            updateQueryInputState();
         }
 
         // Delete book
@@ -358,13 +373,22 @@
         }
 
         // Handle query submission
-        document.getElementById('sendQueryBtn').addEventListener('click', async function() {
+        async function handleQuery() {
             const queryInput = document.getElementById('queryInput');
             const bookSelect = document.getElementById('queryBookSelect');
             const query = queryInput.value.trim();
             const selectedBook = bookSelect.value;
             
-            if (!query || !selectedBook) return;
+            if (!query || !selectedBook) {
+                alert('Please select a book and enter a query');
+                return;
+            }
+            
+            console.log('Sending query:', { book: selectedBook, query: query });
+            
+            // Disable input and button while processing
+            queryInput.disabled = true;
+            document.getElementById('sendQueryBtn').disabled = true;
             
             // Add user message to chat
             addMessageToChat(query, 'user');
@@ -399,22 +423,31 @@
                 console.error('Error:', error);
                 removeTypingIndicator(typingId);
                 addMessageToChat('Sorry, I encountered an error processing your query.', 'bot');
+            } finally {
+                // Re-enable input and button after processing
+                queryInput.disabled = false;
+                document.getElementById('sendQueryBtn').disabled = false;
+                updateQueryInputState();  // Update input state based on book selection
             }
-        });
+        }
 
         // Handle Enter key in query input
         document.getElementById('queryInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('sendQueryBtn').click();
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();  // Prevent default to avoid newline
+                handleQuery();  // Call the query handler directly
             }
         });
+        
+        // Add click handler for send button
+        document.getElementById('sendQueryBtn').addEventListener('click', handleQuery);
 
         // Add message to chat
         function addMessageToChat(message, sender) {
             const chatMessages = document.getElementById('chatMessages');
             
             // Clear welcome message if it exists
-            if (chatMessages.children.length === 1 && chatMessages.children[0].classList.contains('text-center')) {
+            if (chatMessages && chatMessages.children.length === 1 && chatMessages.children[0].classList.contains('text-center')) {
                 chatMessages.innerHTML = '';
             }
             
@@ -508,8 +541,18 @@
         }
 
         // Initialize page
-        loadBooks();
-        updateBookSelect();
+        async function initializePage() {
+            try {
+                await loadBooks();  // Wait for books to load
+                updateBookSelect(); // Then update the select dropdown
+                console.log('Page initialized with books:', availableBooks);
+            } catch (error) {
+                console.error('Error initializing page:', error);
+            }
+        }
+        
+        // Call initialization when page loads
+        initializePage();  // Call immediately
     </script>
 </body>
 </html>

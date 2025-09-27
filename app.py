@@ -9,6 +9,7 @@ from backend.flashcards import generate_flashcards
 from backend.query_rag import query_book_rag
 from rag_com.indexer import indexer
 from backend.slide_decks import generate_slide_deck
+from backend.manage_books import query_book_content
 from langchain_huggingface import HuggingFaceEmbeddings
 
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -184,14 +185,17 @@ def query_book():
         return jsonify({'status': 'error', 'message': 'Book name and query are required'}), 400
     
     try:
-        # Call the RAG query function
-        response_text = query_book_rag(book_name, query)
+        # Use the temporary query function for testing
+        response_text = query_book_content(book_name, query)
+        print(f"Query received - Book: {book_name}, Query: {query}")
+        print(f"Response: {response_text}")
         
         return jsonify({
             'status': 'success',
             'response': response_text
         })
     except Exception as e:
+        print(f"Error processing query: {str(e)}")
         return jsonify({
             'status': 'error',
             'message': f'Error processing query: {str(e)}'
