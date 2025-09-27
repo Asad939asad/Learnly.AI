@@ -38,12 +38,52 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(159, 61, 255, 0.1);
         }
+        .subject-scroll {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .subject-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .subject-scroll::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+        .subject-scroll::-webkit-scrollbar-thumb {
+            background-color: #9f3dff;
+            border-radius: 10px;
+        }
+        .class-select {
+            transition: all 0.3s ease;
+        }
+        .class-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .class-option:hover {
+            transform: translateY(-2px);
+            background-color: rgba(159, 61, 255, 0.1);
+        }
+        .class-option.selected {
+            background-color: #9f3dff;
+            color: white;
+            transform: scale(1.05);
+        }
+        .sticky-sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sticky-sidebar::-webkit-scrollbar {
+            width: 0px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <div class="w-64 bg-primary text-white">
+        <div class="w-64 bg-primary text-white sticky-sidebar">
             <div class="p-4">
                 <h1 class="text-2xl font-bold mb-8 flex items-center">
                     <svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,9 +130,9 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1">
+        <div class="flex-1 overflow-auto">
             <!-- Top Bar -->
-            <div class="bg-white border-b p-4 flex justify-between items-center">
+            <div class="bg-white border-b p-4 flex justify-between items-center sticky top-0 z-10">
                 <div class="flex space-x-6">
                     <a href="#" class="text-gray-600 hover:text-primary font-medium">Home</a>
                     <a href="#" class="text-gray-600 hover:text-primary font-medium">Explore</a>
@@ -113,67 +153,41 @@
             </div>
 
             <!-- Main Form -->
-            <div class="max-w-2xl mx-auto p-6">
+            <div class="max-w-7xl mx-auto p-8">
                 <!-- Welcome Banner -->
-                <div class="mb-8 gradient-bg rounded-2xl p-6 text-white">
-                    <h2 class="text-3xl font-bold mb-2">Welcome to Learnly.ai</h2>
-                    <p class="text-white/90">Your personalized learning journey begins here</p>
+                <div class="mb-8 gradient-bg rounded-2xl p-8 text-white">
+                    <h2 class="text-4xl font-bold mb-3">Welcome to Learnly.ai</h2>
+                    <p class="text-xl text-white/90">Your personalized learning journey begins here</p>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 space-y-8">
-                    <!-- Class Input -->
-                    <div class="space-y-3">
-                        <label for="class" class="block text-xl font-bold text-gray-900">Your Class</label>
-                        <input type="text" id="class" class="w-full px-4 py-3 text-lg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Enter your class">
-                    </div>
-
-                    <!-- Study Topic Input -->
-                    <div class="space-y-3">
-                        <label for="study-topic" class="block text-xl font-bold text-gray-900">What would you like to study?</label>
-                        <input type="text" id="study-topic" class="w-full px-4 py-3 text-lg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="Enter your topic of interest">
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 space-y-10">
+                    <!-- Class Selection -->
+                    <div class="space-y-4">
+                        <label class="block text-2xl font-bold text-gray-900">Class</label>
+                        <div class="grid grid-cols-6 gap-4" id="classSelector">
+                            <!-- Class options will be added by JavaScript -->
+                        </div>
                     </div>
 
                     <!-- Subject Selection -->
                     <div class="space-y-4">
-                        <label class="block text-xl font-bold text-gray-900">Select Subjects</label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="mathematics" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="mathematics" class="ml-3 text-lg text-gray-800">Mathematics</label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="physics" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="physics" class="ml-3 text-lg text-gray-800">Physics</label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="chemistry" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="chemistry" class="ml-3 text-lg text-gray-800">Chemistry</label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="biology" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="biology" class="ml-3 text-lg text-gray-800">Biology</label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="geography" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="geography" class="ml-3 text-lg text-gray-800">Geography</label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="history" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="history" class="ml-3 text-lg text-gray-800">History</label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="general-sciences" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="general-sciences" class="ml-3 text-lg text-gray-800">General Sciences</label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-xl card-hover">
-                                <input type="checkbox" id="other" class="custom-checkbox w-5 h-5 rounded">
-                                <label for="other" class="ml-3 text-lg text-gray-800">Other</label>
-                            </div>
+                        <div class="flex justify-between items-center">
+                            <label class="block text-2xl font-bold text-gray-900">Select Subjects</label>
+                            <span id="subject-count" class="text-sm font-medium text-gray-500">0 of 2 selected</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-4" id="subjectSelector">
+                            <!-- Subject options will be added by JavaScript -->
                         </div>
                     </div>
 
+                    <!-- Study Topic Input -->
+                    <div class="space-y-4">
+                        <label for="study-topic" class="block text-2xl font-bold text-gray-900">What would you like to study?</label>
+                        <textarea id="study-topic" class="w-full px-6 py-4 text-xl border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all h-40" placeholder="Describe what you'd like to learn..."></textarea>
+                    </div>
+
                     <!-- Submit Button -->
-                    <button onclick="submitForm()" class="w-full bg-primary text-white py-4 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
+                    <button onclick="submitForm()" class="w-full bg-primary text-white py-5 px-8 text-xl font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
                         Start Learning
                     </button>
                 </div>
@@ -182,16 +196,57 @@
     </div>
 
     <script>
-        function submitForm() {
-            const userClass = document.getElementById('class').value.trim();
-            const studyTopic = document.getElementById('study-topic').value.trim();
-            const subjects = [
-                'mathematics', 'physics', 'chemistry', 'biology',
-                'geography', 'history', 'general-sciences', 'other'
-            ].filter(id => document.getElementById(id).checked);
+        // Initialize class selector
+        const classSelector = document.getElementById('classSelector');
+        for (let i = 1; i <= 12; i++) {
+            const classOption = document.createElement('div');
+            classOption.className = 'class-option p-4 text-center rounded-xl border-2 border-gray-200 text-lg cursor-pointer transition-all duration-300';
+            classOption.textContent = `Class ${i}`;
+            classOption.dataset.class = i;
+            classOption.onclick = function() {
+                document.querySelectorAll('.class-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            };
+            classSelector.appendChild(classOption);
+        }
 
-            if (!userClass) {
-                alert('Please enter your class');
+        // Initialize subject selector
+        const subjects = [
+            'Mathematics', 'Physics', 'Chemistry', 'Biology',
+            'Geography', 'History', 'General Sciences', 'Other'
+        ];
+        const subjectSelector = document.getElementById('subjectSelector');
+        subjects.forEach(subject => {
+            const subjectOption = document.createElement('div');
+            subjectOption.className = 'class-option p-4 text-center rounded-xl border-2 border-gray-200 text-lg cursor-pointer transition-all duration-300';
+            subjectOption.textContent = subject;
+            subjectOption.dataset.subject = subject;
+            subjectOption.onclick = function() {
+                const selectedSubjects = document.querySelectorAll('#subjectSelector .selected');
+                if (!this.classList.contains('selected') && selectedSubjects.length >= 2) {
+                    alert('You can only select up to 2 subjects');
+                    return;
+                }
+                this.classList.toggle('selected');
+                const newSelectedCount = document.querySelectorAll('#subjectSelector .selected').length;
+                document.getElementById('subject-count').textContent = `${newSelectedCount} of 2 selected`;
+            };
+            subjectSelector.appendChild(subjectOption);
+        });
+
+        function submitForm() {
+            const selectedClass = document.querySelector('.class-option.selected')?.dataset.class;
+            const studyTopic = document.getElementById('study-topic').value.trim();
+            const selectedSubjects = Array.from(document.querySelectorAll('#subjectSelector .selected'))
+                .map(div => div.dataset.subject);
+
+            if (!selectedClass) {
+                alert('Please select your class');
+                return;
+            }
+
+            if (selectedSubjects.length === 0) {
+                alert('Please select at least one subject');
                 return;
             }
 
@@ -201,9 +256,9 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    class: userClass,
+                    class: selectedClass,
                     study_topic: studyTopic,
-                    subjects: subjects
+                    subjects: selectedSubjects
                 })
             })
             .then(response => response.json())
