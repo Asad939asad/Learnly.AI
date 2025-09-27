@@ -153,41 +153,41 @@
             </div>
 
             <!-- Main Form -->
-            <div class="max-w-7xl mx-auto p-8">
+            <div class="max-w-7xl mx-auto p-6">
                 <!-- Welcome Banner -->
-                <div class="mb-8 gradient-bg rounded-2xl p-8 text-white">
-                    <h2 class="text-4xl font-bold mb-3">Welcome to Learnly.ai</h2>
-                    <p class="text-xl text-white/90">Your personalized learning journey begins here</p>
+                <div class="mb-6 gradient-bg rounded-xl p-6 text-white">
+                    <h2 class="text-3xl font-bold mb-2">Welcome to Learnly.ai</h2>
+                    <p class="text-lg text-white/90">Your personalized learning journey begins here</p>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 space-y-10">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
                     <!-- Class Selection -->
-                    <div class="space-y-4">
-                        <label class="block text-2xl font-bold text-gray-900">Class</label>
-                        <div class="grid grid-cols-6 gap-4" id="classSelector">
+                    <div class="space-y-3">
+                        <label class="block text-xl font-bold text-gray-900">Class</label>
+                        <div class="grid grid-cols-6 gap-3" id="classSelector">
                             <!-- Class options will be added by JavaScript -->
                         </div>
                     </div>
 
                     <!-- Subject Selection -->
-                    <div class="space-y-4">
+                    <div class="space-y-3">
                         <div class="flex justify-between items-center">
-                            <label class="block text-2xl font-bold text-gray-900">Select Subjects</label>
+                            <label class="block text-xl font-bold text-gray-900">Select Subjects</label>
                             <span id="subject-count" class="text-sm font-medium text-gray-500">0 of 2 selected</span>
                         </div>
-                        <div class="grid grid-cols-4 gap-4" id="subjectSelector">
+                        <div class="grid grid-cols-4 gap-3" id="subjectSelector">
                             <!-- Subject options will be added by JavaScript -->
                         </div>
                     </div>
 
                     <!-- Study Topic Input -->
-                    <div class="space-y-4">
-                        <label for="study-topic" class="block text-2xl font-bold text-gray-900">What would you like to study?</label>
-                        <textarea id="study-topic" class="w-full px-6 py-4 text-xl border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all h-40" placeholder="Describe what you'd like to learn..."></textarea>
+                    <div class="space-y-3">
+                        <label for="study-topic" class="block text-xl font-bold text-gray-900">What would you like to study?</label>
+                        <textarea id="study-topic" class="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all h-24" placeholder="Describe what you'd like to learn..."></textarea>
                     </div>
 
                     <!-- Submit Button -->
-                    <button onclick="submitForm()" class="w-full bg-primary text-white py-5 px-8 text-xl font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
+                    <button onclick="submitForm()" class="w-full bg-primary text-white py-4 px-6 text-lg font-bold rounded-xl hover:bg-primary/90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl">
                         Start Learning
                     </button>
                 </div>
