@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnly.ai - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9f3dff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-checkbox:checked {
+            background-color: #9f3dff;
+            border-color: #9f3dff;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Initial Form -->
+        <div id="initial-form" class="space-y-6">
+            <h1 class="text-4xl font-bold text-black text-center">Welcome to Learnly.ai</h1>
+            <div class="bg-white rounded-lg shadow-lg p-6 space-y-4">
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
+                    <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                </div>
+                <div class="space-y-2">
+                    <label for="class" class="block text-sm font-medium text-gray-700">Your Class</label>
+                    <input type="text" id="class" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                </div>
+                <button onclick="submitUserInfo()" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors">
+                    Get Started
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Content (Initially Hidden) -->
+        <div id="dashboard-content" class="space-y-6 hidden">
+            <h1 id="greeting" class="text-4xl font-bold text-black text-center"></h1>
+            <div class="bg-white rounded-lg shadow-lg p-6 space-y-4">
+                <div class="space-y-2">
+                    <label for="study-topic" class="block text-sm font-medium text-gray-700">What would you like to study?</label>
+                    <input type="text" id="study-topic" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Select Subjects</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="mathematics" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="mathematics" class="ml-2">Mathematics</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="physics" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="physics" class="ml-2">Physics</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="chemistry" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="chemistry" class="ml-2">Chemistry</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="biology" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="biology" class="ml-2">Biology</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="geography" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="geography" class="ml-2">Geography</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="history" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="history" class="ml-2">History</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="general-sciences" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="general-sciences" class="ml-2">General Sciences</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="other" class="custom-checkbox w-4 h-4 rounded">
+                            <label for="other" class="ml-2">Other</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function submitUserInfo() {
+            const name = document.getElementById('name').value.trim();
+            const userClass = document.getElementById('class').value.trim();
+            
+            if (!name || !userClass) {
+                alert('Please enter both your name and class');
+                return;
+            }
+
+            fetch('/submit_user_info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    class: userClass
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Hide initial form
+                    document.getElementById('initial-form').classList.add('hidden');
+                    
+                    // Show dashboard content
+                    const dashboardContent = document.getElementById('dashboard-content');
+                    dashboardContent.classList.remove('hidden');
+                    
+                    // Update greeting
+                    document.getElementById('greeting').textContent = `HELLO ${data.name.toUpperCase()}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
