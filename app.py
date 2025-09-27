@@ -89,6 +89,7 @@ def upload_and_index_book():
         
         # Extract book name without extension for indexing
         book_name = os.path.splitext(filename)[0]
+        print(f"Indexing book: {book_name}")
         
         try:
             # Call the indexer
@@ -97,12 +98,17 @@ def upload_and_index_book():
                 sys.executable, indexer_path, book_name
             ], capture_output=True, text=True, cwd=os.getcwd())
             
+            print(f"Indexer output: {result.stdout}")
+            print(f"Indexer errors: {result.stderr}")
+            
             if result.returncode == 0:
+                print("Indexing done")
                 return jsonify({
                     'status': 'success',
                     'message': 'Book uploaded and indexed successfully!'
                 })
             else:
+                print(f"Indexing failed with return code: {result.returncode}")
                 return jsonify({
                     'status': 'error',
                     'message': f'Indexing failed: {result.stderr}'
