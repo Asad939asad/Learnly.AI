@@ -113,7 +113,7 @@ def query_book_content(embeddings, book_name: str, query: str) -> str:
     """
     try:
         db = load_index(book_name, embeddings)
-        results = db.similarity_search(query, k=2)  # retrieve top-3 chunks for richer context
+        results = db.similarity_search(query, k=8)  # retrieve top-3 chunks for richer context
 
         # Gather context
         context = [res.page_content for res in results]
@@ -128,6 +128,7 @@ def query_book_content(embeddings, book_name: str, query: str) -> str:
         - If relevant context is provided, use it to guide your answer.  
         - If context is missing or insufficient, rely on your own knowledge to provide the best possible response.  
         - Always keep your response clear, concise, and accurate.  
+        - dont say like "based on context", context is for your assisstance only just take gudiance from it but response should must be clear and to the point.
 
         Context from the book (if available):  
         {context}

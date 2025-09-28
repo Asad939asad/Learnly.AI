@@ -246,7 +246,6 @@ def create_flashcards():
     data = request.get_json()
     rag = data.get('use_rag', False)
     book_name = data.get('book_name')  # Optional parameter
-    
     # Use global variables from dashboard
     if not all([global_class, global_subjects, global_study_topic]):
         return jsonify({
@@ -263,7 +262,7 @@ def create_flashcards():
         rag=rag,
         book_name=book_name
     )
-    
+    # print(flashcards)/
     return jsonify({
         "status": "success",
         "flashcards": flashcards
